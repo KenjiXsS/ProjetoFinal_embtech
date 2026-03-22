@@ -1,1 +1,54 @@
-build
+# Build directory
+build/
+cmake-build-*/
+out/
+
+# Compiled files
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.exe
+
+# Pico SDK files
+pico-sdk/
+tinyusb/
+pico-extras/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+compile_commands.json
+
+# Binary output files (keep uf2 for distribution)
+*.elf
+*.bin
+*.hex
+*.map
+
+# Serial monitor logs
+*.log
+serial_output.txt
+
+# Configuration files with secrets
+wifi_config.local
+config.local
+*.secret
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak

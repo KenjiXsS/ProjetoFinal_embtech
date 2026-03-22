@@ -1,62 +1,86 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
-// Common settings used in most of the pico_w examples
-// (see https://www.nongnu.org/lwip/2_1_x/group__lwip__opts.html for details)
+// lwIP Options for Pico Firewall Monitor
+// Optimized for web server and network monitoring functionality
 
-// allow override in some examples
+// Common settings
 #ifndef NO_SYS
 #define NO_SYS                      1
 #endif
-// allow override in some examples
+
 #ifndef LWIP_SOCKET
 #define LWIP_SOCKET                 0
 #endif
+
 #if PICO_CYW43_ARCH_POLL
 #define MEM_LIBC_MALLOC             1
 #else
-// MEM_LIBC_MALLOC is incompatible with non polling versions
 #define MEM_LIBC_MALLOC             0
 #endif
+
+// Memory settings - Increased for web server
 #define MEM_ALIGNMENT               4
-#define MEM_SIZE                    4000
-#define MEMP_NUM_TCP_SEG            32
+#define MEM_SIZE                    8000            // Increased from 4000 for better web server support
+#define MEMP_NUM_TCP_SEG            64              // Increased for multiple connections
 #define MEMP_NUM_ARP_QUEUE          10
-#define PBUF_POOL_SIZE              24
+#define PBUF_POOL_SIZE              32              // Increased for better throughput
+
+// Network protocols
 #define LWIP_ARP                    1
 #define LWIP_ETHERNET               1
 #define LWIP_ICMP                   1
 #define LWIP_RAW                    1
-#define TCP_WND                     (8 * TCP_MSS)
+
+// TCP settings - Optimized for web server
+#define TCP_WND                     (16 * TCP_MSS)  // Increased window size
 #define TCP_MSS                     1460
-#define TCP_SND_BUF                 (8 * TCP_MSS)
+#define TCP_SND_BUF                 (16 * TCP_MSS)  // Increased send buffer
 #define TCP_SND_QUEUELEN            ((4 * (TCP_SND_BUF) + (TCP_MSS - 1)) / (TCP_MSS))
+#define TCP_LISTEN_BACKLOG          4               // Enable listen backlog
+#define DEFAULT_ACCEPTMBOX_SIZE     10
+
+// Network interface callbacks
 #define LWIP_NETIF_STATUS_CALLBACK  1
 #define LWIP_NETIF_LINK_CALLBACK    1
 #define LWIP_NETIF_HOSTNAME         1
+
+// Connection settings
 #define LWIP_NETCONN                0
+#define LWIP_TCP_KEEPALIVE          1
+#define TCP_KEEPIDLE_DEFAULT        120             // 2 minutes idle before keepalive
+#define TCP_KEEPINTVL_DEFAULT       30              // 30 seconds between keepalives
+#define TCP_KEEPCNT_DEFAULT         3               // 3 failed keepalives before disconnect
+
+// Memory statistics (disabled for production)
 #define MEM_STATS                   0
 #define SYS_STATS                   0
 #define MEMP_STATS                  0
 #define LINK_STATS                  0
-// #define ETH_PAD_SIZE                2
+
+// Checksum optimization
 #define LWIP_CHKSUM_ALGORITHM       3
-#define LWIP_DHCP                   1
+#define LWIP_NETIF_TX_SINGLE_PBUF   1
+
+// IP settings
 #define LWIP_IPV4                   1
 #define LWIP_TCP                    1
 #define LWIP_UDP                    1
 #define LWIP_DNS                    1
-#define LWIP_TCP_KEEPALIVE          1
-#define LWIP_NETIF_TX_SINGLE_PBUF   1
+
+// DHCP settings
+#define LWIP_DHCP                   1
 #define DHCP_DOES_ARP_CHECK         0
 #define LWIP_DHCP_DOES_ACD_CHECK    0
 
+// Debug settings (disable for production)
 #ifndef NDEBUG
 #define LWIP_DEBUG                  1
 #define LWIP_STATS                  1
 #define LWIP_STATS_DISPLAY          1
 #endif
 
+// Debug levels (all off for production)
 #define ETHARP_DEBUG                LWIP_DBG_OFF
 #define NETIF_DEBUG                 LWIP_DBG_OFF
 #define PBUF_DEBUG                  LWIP_DBG_OFF
